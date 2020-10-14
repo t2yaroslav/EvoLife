@@ -99,7 +99,7 @@ def simulate(settings, units, foods, gen):
     for t_step in range(0, total_time_steps, 1):
 
         # Plot simulation frame
-        if settings['plot'] == True and gen == settings['gens'] - 1:
+        if settings['plot'] == True: # and gen == settings['gens'] - 1:
             render(settings, units, foods, gen, t_step)
 
         # Update fitness function

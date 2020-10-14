@@ -1,50 +1,33 @@
-import cv2
-from matplotlib import pyplot as plt
-import numpy as np
-
-
-def create_blank(width, height, rgb_color=(0, 0, 0)):
-    """Create new image(numpy array) filled with certain color in RGB"""
-    # Create black blank image
-    image = np.zeros((height, width, 3), np.uint8)
-
-    # Since OpenCV uses BGR, convert the color first
-    color = tuple(reversed(rgb_color))
-    # Fill image with color
-    image[:] = color
-
-    return image
+import pygame
+from pygame import gfxdraw
 
 
 def render(settings, units, foods, gen, time):
-    window_name = 'Camera'
-    image = create_blank(300, 300)
+    pygame.init()
+
+    screen = pygame.display.set_mode([800, 800])
+
+    screen.fill((255, 255, 255))
 
     # Plot units
     for unit in units:
-        render_unit(image, unit.x, unit.y, unit.r)
+        render_unit(pygame, screen, int((unit.x+2.1)*200), int((unit.y+2.1)*200), unit.r)
 
     # Plot food particles
     for food in foods:
-        render_foot(image, food.x, food.y)
+        render_foot(pygame, screen, int((food.x+2.1)*200), int((food.y+2.1)*200))
 
-    cv2.imshow(window_name, image)
-    cv2.waitKey(1)
+    pygame.display.flip()
 
+ #   pygame.quit()
 
-def render_unit(image, x, y, theta):
-
-    coordinates = (int(x), int(y))
-    radius = 5
-    color = (255, 0, 0)
-    thickness = 1
-
-    image = cv2.circle(image, coordinates, radius, color, thickness)
+def render_unit(image, screen, x, y, theta):
+    draw_circle(screen, x, y, 4, (102, 102, 255))
 
 
-def render_foot(image, x, y):
-    coordinates = (int(x), int(y))
-    radius = 5
-    color = (255, 0, 0)
-    thickness = 1
-    image = cv2.circle(image, coordinates, radius, color, thickness)
+def render_foot(image, screen, x, y):
+    draw_circle(screen, x, y, 3, (255, 178, 102))
+
+def draw_circle(surface, x, y, radius, color):
+    gfxdraw.aacircle(surface, x, y, radius, color)
+    gfxdraw.filled_circle(surface, x, y, radius, color)
