@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
-def initialize(width, height, rgb_color=(0, 0, 0)):
+def create_blank(width, height, rgb_color=(0, 0, 0)):
     """Create new image(numpy array) filled with certain color in RGB"""
     # Create black blank image
     image = np.zeros((height, width, 3), np.uint8)
@@ -18,33 +18,33 @@ def initialize(width, height, rgb_color=(0, 0, 0)):
 
 def render(settings, units, foods, gen, time):
     window_name = 'Camera'
-
-    fig, ax = plt.subplots()
-    fig.set_size_inches(9.6, 5.4)
-
-    plt.xlim([settings['x_min'] + settings['x_min'] * 0.25, settings['x_max'] + settings['x_max'] * 0.25])
-    plt.ylim([settings['y_min'] + settings['y_min'] * 0.25, settings['y_max'] + settings['y_max'] * 0.25])
+    image = create_blank(300, 300)
 
     # Plot units
     for unit in units:
-        render_unit(unit.x, unit.y, unit.r, ax)
+        render_unit(image, unit.x, unit.y, unit.r)
 
     # Plot food particles
     for food in foods:
-        render_foot(food.x, food.y, ax)
+        render_foot(image, food.x, food.y)
 
     cv2.imshow(window_name, image)
+    cv2.waitKey(1)
 
 
-def render_unit(x, y, theta, ax):
+def render_unit(image, x, y, theta):
 
-    coordinates = (x, y)
-    radius = 20
+    coordinates = (int(x), int(y))
+    radius = 5
     color = (255, 0, 0)
-    thickness = 2
+    thickness = 1
 
     image = cv2.circle(image, coordinates, radius, color, thickness)
 
 
-def render_foot(x1, y1, ax):
-    image = cv2.circle(image, center_coordinates, radius, color, thickness)
+def render_foot(image, x, y):
+    coordinates = (int(x), int(y))
+    radius = 5
+    color = (255, 0, 0)
+    thickness = 1
+    image = cv2.circle(image, coordinates, radius, color, thickness)

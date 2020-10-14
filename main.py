@@ -8,7 +8,6 @@
 import numpy as np
 from engine import simulate, evolve
 from food import food
-from render import initialize
 from unit import unit
 
 settings = {
@@ -41,7 +40,6 @@ settings = {
 
 
 def run(settings):
-    initialize(300, 300)
 
     # Food
     foods = []
