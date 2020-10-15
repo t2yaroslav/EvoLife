@@ -12,9 +12,9 @@ from unit import unit
 
 settings = {
     # Evolution
-    'pop_size': 50,  # number of organisms
-    'food_num': 100,  # number of food particles
-    'gens': 1,  # number of generations
+    'pop_size': 200,  # number of organisms
+    'food_num': 3,  # number of food particles
+    'gens': 50,  # number of generations
     'elitism': 0.20,  # elitism (selection bias)
     'mutate': 0.10,  # mutation rate
 
@@ -56,6 +56,7 @@ def run(settings):
 
     # Main cycle
     for gen in range(0, settings['gens']):
+
         # Simulate
         units = simulate(settings, units, foods, gen)
 

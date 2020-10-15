@@ -99,13 +99,19 @@ def simulate(settings, units, foods, gen):
     for t_step in range(0, total_time_steps, 1):
 
         # Plot simulation frame
-        if settings['plot'] == True: # and gen == settings['gens'] - 1:
+        if settings['plot'] == True:  # and gen == settings['gens'] - 1:
             render(settings, units, foods, gen, t_step)
 
         # Update fitness function
         for food in foods:
             for org in units:
                 food_org_dist = dist(org.x, org.y, food.x, food.y)
+
+                # Spend of energy/fitness (depends to speed)
+                org.fitness = org.fitness - (org.velocity + org.velocity) / 30
+                if org.fitness <= 0:
+                    org.velocity = 0
+                    org.alive = False
 
                 # Update fitness function
                 if food_org_dist <= 0.075:
@@ -130,12 +136,13 @@ def simulate(settings, units, foods, gen):
 
         # Get unit response
         for org in units:
-            org.think()
+            if org.alive: org.think()
 
         # Update units position and velocity
         for org in units:
-            org.update_r(settings)
-            org.update_vel(settings)
-            org.update_pos(settings)
+            if org.alive:
+                org.update_r(settings)
+                org.update_vel(settings)
+                org.update_pos(settings)
 
     return units
