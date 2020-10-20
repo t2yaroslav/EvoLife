@@ -32,23 +32,30 @@ def evolve(settings, units_old, gen):
     # Get stats from current generation
     stats = defaultdict(int)
     for org in units_old:
-        if org.fitness > stats['Best'] or stats['Best'] == 0:
-            stats['Best'] = org.fitness
+        if org.energy > stats['Best'] or stats['Best'] == 0:
+            stats['Best'] = org.energy
 
-        if org.fitness < stats['Worst'] or stats['Worst'] == 0:
-            stats['Worst'] = org.fitness
+        if org.energy < stats['Worst'] or stats['Worst'] == 0:
+            stats['Worst'] = org.energy
 
-        stats['Sum'] += org.fitness
+        stats['Sum'] += org.energy
         stats['Count'] += 1
 
     stats['Avg'] = stats['Sum'] / stats['Count']
 
     # Elitism (keep Best performing units)
-    orgs_sorted = sorted(units_old, key=operator.attrgetter('fitness'), reverse=True)
+    # units_old = filter(lambda u: u.alive == True, units_old)  # unit is dead
+
+    orgs_sorted = sorted(units_old, key=operator.attrgetter('energy'), reverse=True)
     units_new = []
     for i in range(0, elitism_num):
-        units_new.append(
-            unit(settings, wih=orgs_sorted[i].wih, who=orgs_sorted[i].who, name=orgs_sorted[i].name))
+        if orgs_sorted[i].alive:
+            units_new.append(
+                unit(settings,
+                     wih=orgs_sorted[i].wih,
+                     who=orgs_sorted[i].who,
+                     name=orgs_sorted[i].name,
+                     generation=orgs_sorted[i].generation))
 
     # Generate new units
     for w in range(0, new_orgs):
@@ -87,7 +94,7 @@ def evolve(settings, units_old, gen):
                 if who_new[index_row][index_col] < -1: who_new[index_row][index_col] = -1
 
         units_new.append(
-            unit(settings, wih=wih_new, who=who_new, name='gen[' + str(gen) + ']-org[' + str(w) + ']'))
+            unit(settings, wih=wih_new, who=who_new, name='gen[' + str(gen) + ']-org[' + str(w) + ']', generation=gen))
 
     return units_new, stats
 
@@ -102,21 +109,23 @@ def simulate(settings, units, foods, gen):
         if settings['plot'] == True:  # and gen == settings['gens'] - 1:
             render(settings, units, foods, gen, t_step)
 
-        # Update fitness function
+        # Update energy function
         for food in foods:
             for org in units:
                 food_org_dist = dist(org.x, org.y, food.x, food.y)
 
-                # Spend of energy/fitness (depends to speed)
-                org.fitness = org.fitness - (org.velocity + org.velocity) / 30
-                if org.fitness <= 0:
+                # Spend of energy/energy (depends to speed)
+                org.energy = org.energy - (0.01 + org.velocity + org.velocity) / 300
+                if org.energy <= 0:
                     org.velocity = 0
                     org.alive = False
 
-                # Update fitness function
+                # Update energy function
                 if food_org_dist <= 0.075:
-                    org.fitness += food.energy
-                    food.respawn(settings)
+                    if org.energy < 100 and org.velocity < 0.1:
+                        org.energy += 0.1
+                        food.energy -= 0.1
+                        if food.energy <= 0: food.respawn(settings)
 
                 # Reset distance and heading to nearest food source
                 org.d_food = 100

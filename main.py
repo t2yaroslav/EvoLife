@@ -13,13 +13,13 @@ from unit import unit
 settings = {
     # Evolution
     'pop_size': 200,  # number of organisms
-    'food_num': 3,  # number of food particles
+    'food_num': 10,  # number of food particles
     'gens': 50,  # number of generations
-    'elitism': 0.20,  # elitism (selection bias)
+    'elitism': 0.40,  # selection bias
     'mutate': 0.10,  # mutation rate
 
     # Simulation
-    'gen_time': 100,  # generation length         (seconds)
+    'gen_time': 200,  # generation length         (seconds)
     'dt': 0.04,  # simulation time step      (dt)
     'dr_max': 720,  # max rotational speed      (degrees per second)
     'v_max': 0.5,  # max velocity              (units per second)

@@ -6,7 +6,7 @@ from random import uniform
 
 
 class unit():
-    def __init__(self, settings, wih=None, who=None, name=None):
+    def __init__(self, settings, wih=None, who=None, name=None, generation=1):
 
         self.x = uniform(settings['x_min'], settings['x_max'])  # position (x)
         self.y = uniform(settings['y_min'], settings['y_max'])  # position (y)
@@ -17,13 +17,14 @@ class unit():
 
         self.d_food = 100  # distance to nearest food
         self.r_food = 0  # orientation to nearest food
-        self.fitness = 100  # fitness (food Count)
+        self.energy = 50  # energy (food Count)
 
         self.wih = wih
         self.who = who
 
         self.name = name
         self.alive = True
+        self.generation = generation
 
     # Neural network
     def think(self):
