@@ -12,11 +12,11 @@ def render(settings, units, foods, gen, time):
 
     # Plot units
     for unit in units:
-        render_unit(screen, int((unit.x + 2.1) * 200), int((unit.y + 2.1) * 200), unit.r, unit.alive, unit.generation)
+        render_unit(screen, int(unit.x), int(unit.y), int(unit.energy/10)+3, unit.alive, unit.generation)
 
     # Plot food particles
     for food in foods:
-        render_foot(screen, int((food.x + 2.1) * 200), int((food.y + 2.1) * 200), int(food.energy/10))
+        render_foot(screen, int(food.x), int(food.y), int(food.energy/10))
 
     pygame.display.flip()
 
@@ -37,9 +37,9 @@ def render_unit(screen, x, y, r, alive, generation):
         color = colors[1]
 
     if alive:
-        draw_circle(screen, x, y, 4, (100, 102, 255), color)
+        draw_circle(screen, x, y, r, (50, 50, 100), color)
     else:
-        draw_circle(screen, x, y, 4, (100, 100, 100), (200, 200, 200))
+        draw_circle(screen, x, y, r, (100, 100, 100), (200, 200, 200))
 
 
 def render_foot(screen, x, y, radius):

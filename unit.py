@@ -8,12 +8,12 @@ from random import uniform
 class unit():
     def __init__(self, settings, wih=None, who=None, name=None, generation=1):
 
-        self.x = uniform(settings['x_min'], settings['x_max'])  # position (x)
-        self.y = uniform(settings['y_min'], settings['y_max'])  # position (y)
+        self.x = uniform(settings['border_x_min'], settings['border_x_max'])  # position (x)
+        self.y = uniform(settings['border_y_min'], settings['border_y_max'])  # position (y)
 
         self.r = uniform(0, 360)  # orientation   [0, 360]
-        self.velocity = uniform(0, settings['v_max'])  # velocity      [0, v_max]
-        self.dv = uniform(-settings['dv_max'], settings['dv_max'])  # dv
+        self.velocity = uniform(0, settings['velocity_max'])  # velocity      [0, v_max]
+        self.dv = uniform(-settings['acceleration_max'], settings['acceleration_max'])  # dv
 
         self.d_food = 100  # distance to nearest food
         self.r_food = 0  # orientation to nearest food
@@ -40,18 +40,18 @@ class unit():
 
     # Update heading
     def update_r(self, settings):
-        self.r += self.nn_dr * settings['dr_max'] * settings['dt']
+        self.r += self.nn_dr * settings['turn_sped'] * settings['time_step']
         self.r = self.r % 360
 
     # Update velocity
     def update_vel(self, settings):
-        self.velocity += self.nn_dv * settings['dv_max'] * settings['dt']
+        self.velocity += self.nn_dv * settings['acceleration_max'] * settings['time_step']
         if self.velocity < 0: self.velocity = 0
-        if self.velocity > settings['v_max']: self.velocity = settings['v_max']
+        if self.velocity > settings['velocity_max']: self.velocity = settings['velocity_max']
 
     # Update position
     def update_pos(self, settings):
-        dx = self.velocity * cos(radians(self.r)) * settings['dt']
-        dy = self.velocity * sin(radians(self.r)) * settings['dt']
+        dx = self.velocity * cos(radians(self.r)) * settings['time_step']
+        dy = self.velocity * sin(radians(self.r)) * settings['time_step']
         self.x += dx
         self.y += dy

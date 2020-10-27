@@ -12,35 +12,39 @@ from unit import unit
 
 settings = {
     # Evolution
-    'pop_size': 200,  # number of organisms
+    'units_count': 200,  # number of units
     'food_num': 10,  # number of food particles
     'gens': 50,  # number of generations
-    'elitism': 0.40,  # selection bias
+    'survivors_count': 0.40,  # selection bias
     'mutate': 0.10,  # mutation rate
+
+    'eating_speed': 0.1,  # eating speedустойчивый
+    'eating_speed_max': 0.01,    # stop for eat
+    'energy_digress': 0.0001,  # energy digress (permanent)
+    'energy_waste': 0.000001,  # energy waste (depends on velocity)
 
     # Simulation
     'gen_time': 200,  # generation length         (seconds)
-    'dt': 0.04,  # simulation time step      (dt)
-    'dr_max': 720,  # max rotational speed      (degrees per second)
-    'v_max': 0.5,  # max velocity              (units per second)
-    'dv_max': 0.25,  # max acceleration (+/-)    (units per second^2)
+    'time_step': 0.04,  # simulation time step      (dt)
+    'turn_sped': 1480,  # max rotational speed      (degrees per second)
+    'velocity_max': 20,  # max velocity              (units per second)
+    'acceleration_max': 0.25,  # max acceleration (+/-)    (units per second^2)
 
-    'x_min': -2.0,  # arena western border
-    'x_max': 2.0,  # arena eastern border
-    'y_min': -2.0,  # arena southern border
-    'y_max': 2.0,  # arena northern border
+    'border_x_min': 0,  # arena western border
+    'border_x_max': 800,  # arena eastern border
+    'border_y_min': 0,  # arena southern border
+    'border_y_max': 800,  # arena northern border
 
     'plot': True,  # plot final generation?
 
     # Neural Net
-    'inodes': 1,  # number of input nodes
-    'hnodes': 5,  # number of hidden nodes
-    'onodes': 2  # number of output nodes
+    'input_nodes': 1,  # number of input nodes
+    'hidden_nodes': 10,  # number of hidden nodes
+    'output_nodes': 2  # number of output nodes
 }
 
 
 def run(settings):
-
     # Food
     foods = []
     for i in range(0, settings['food_num']):
@@ -48,15 +52,16 @@ def run(settings):
 
     # Unit
     units = []
-    for i in range(0, settings['pop_size']):
-        wih_init = np.random.uniform(-1, 1, (settings['hnodes'], settings['inodes']))  # mlp weights (input -> hidden)
-        who_init = np.random.uniform(-1, 1, (settings['onodes'], settings['hnodes']))  # mlp weights (hidden -> output)
+    for i in range(0, settings['units_count']):
+        wih_init = np.random.uniform(-1, 1, (
+            settings['hidden_nodes'], settings['input_nodes']))  # mlp weights (input -> hidden)
+        who_init = np.random.uniform(-1, 1, (
+            settings['output_nodes'], settings['hidden_nodes']))  # mlp weights (hidden -> output)
 
         units.append(unit(settings, wih_init, who_init, name='gen[x]-org[' + str(i) + ']'))
 
     # Main cycle
     for gen in range(0, settings['gens']):
-
         # Simulate
         units = simulate(settings, units, foods, gen)
 

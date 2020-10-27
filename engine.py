@@ -26,8 +26,8 @@ def calc_heading(org, food):
 
 
 def evolve(settings, units_old, gen):
-    elitism_num = int(floor(settings['elitism'] * settings['pop_size']))
-    new_orgs = settings['pop_size'] - elitism_num
+    elitism_num = int(floor(settings['survivors_count'] * settings['units_count']))
+    new_orgs = settings['units_count'] - elitism_num
 
     # Get stats from current generation
     stats = defaultdict(int)
@@ -80,15 +80,15 @@ def evolve(settings, units_old, gen):
 
             # Mutate: wih weights
             if mat_pick == 0:
-                index_row = randint(0, settings['hnodes'] - 1)
+                index_row = randint(0, settings['hidden_nodes'] - 1)
                 wih_new[index_row] = wih_new[index_row] * uniform(0.9, 1.1)
                 if wih_new[index_row] > 1: wih_new[index_row] = 1
                 if wih_new[index_row] < -1: wih_new[index_row] = -1
 
             # Mutate: who weights
             if mat_pick == 1:
-                index_row = randint(0, settings['onodes'] - 1)
-                index_col = randint(0, settings['hnodes'] - 1)
+                index_row = randint(0, settings['output_nodes'] - 1)
+                index_col = randint(0, settings['hidden_nodes'] - 1)
                 who_new[index_row][index_col] = who_new[index_row][index_col] * uniform(0.9, 1.1)
                 if who_new[index_row][index_col] > 1: who_new[index_row][index_col] = 1
                 if who_new[index_row][index_col] < -1: who_new[index_row][index_col] = -1
@@ -100,7 +100,7 @@ def evolve(settings, units_old, gen):
 
 
 def simulate(settings, units, foods, gen):
-    total_time_steps = int(settings['gen_time'] / settings['dt'])
+    total_time_steps = int(settings['gen_time'] / settings['time_step'])
 
     # Cycle through each time step
     for t_step in range(0, total_time_steps, 1):
@@ -112,24 +112,26 @@ def simulate(settings, units, foods, gen):
         # Update energy function
         for food in foods:
             for org in units:
-                food_org_dist = dist(org.x, org.y, food.x, food.y)
+                if org.alive:
+                    food_org_dist = dist(org.x, org.y, food.x, food.y)
 
-                # Spend of energy/energy (depends to speed)
-                org.energy = org.energy - (0.01 + org.velocity + org.velocity) / 300
-                if org.energy <= 0:
-                    org.velocity = 0
-                    org.alive = False
+                    # Spend of energy/energy (depends to speed)
+                    org.energy = org.energy - (
+                                settings['energy_digress'] + (org.velocity * 2) * settings['energy_waste'])
+                    if org.energy <= 0:
+                        org.velocity = 0
+                        org.alive = False
 
-                # Update energy function
-                if food_org_dist <= 0.075:
-                    if org.energy < 100 and org.velocity < 0.1:
-                        org.energy += 0.1
-                        food.energy -= 0.1
-                        if food.energy <= 0: food.respawn(settings)
+                    # Update energy function
+                    if food_org_dist <= 0.075:
+                        if org.energy < 100 and org.velocity < settings['eating_speed_max']:
+                            org.energy += settings['eating_speed']
+                            food.energy -= settings['eating_speed']
+                            if food.energy <= 0: food.respawn(settings)
 
-                # Reset distance and heading to nearest food source
-                org.d_food = 100
-                org.r_food = 0
+                    # Reset distance and heading to nearest food source
+                    org.d_food = 100
+                    org.r_food = 0
 
         # Calculate heading to nearest food source
         for food in foods:
