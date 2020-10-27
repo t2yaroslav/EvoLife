@@ -43,8 +43,7 @@ def evolve(settings, units_old, gen):
 
     stats['Avg'] = stats['Sum'] / stats['Count']
 
-    # Elitism (keep Best performing units)
-    # units_old = filter(lambda u: u.alive == True, units_old)  # unit is dead
+    # keep Best performing units
 
     orgs_sorted = sorted(units_old, key=operator.attrgetter('energy'), reverse=True)
     units_new = []

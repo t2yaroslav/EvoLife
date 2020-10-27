@@ -35,17 +35,17 @@ class unit():
         out = af(np.dot(self.who, h1))  # output layer
 
         # Update dv and dr with MLP response
-        self.nn_dv = float(out[0])  # [-1, 1]  (accelerate=1, deaccelerate=-1)
-        self.nn_dr = float(out[1])  # [-1, 1]  (left=1, right=-1)
+        self.nn_accelerate = float(out[0])  # [-1, 1]  (accelerate=1, deaccelerate=-1)
+        self.nn_rotate = float(out[1])  # [-1, 1]  (left=1, right=-1)
 
     # Update heading
     def update_r(self, settings):
-        self.r += self.nn_dr * settings['turn_sped'] * settings['time_step']
+        self.r += self.nn_rotate * settings['turn_sped'] * settings['time_step']
         self.r = self.r % 360
 
     # Update velocity
     def update_vel(self, settings):
-        self.velocity += self.nn_dv * settings['acceleration_max'] * settings['time_step']
+        self.velocity += self.nn_accelerate * settings['acceleration_max'] * settings['time_step']
         if self.velocity < 0: self.velocity = 0
         if self.velocity > settings['velocity_max']: self.velocity = settings['velocity_max']
 

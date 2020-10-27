@@ -26,8 +26,8 @@ settings = {
     # Simulation
     'gen_time': 200,  # generation length         (seconds)
     'time_step': 0.04,  # simulation time step      (dt)
-    'turn_sped': 1480,  # max rotational speed      (degrees per second)
-    'velocity_max': 20,  # max velocity              (units per second)
+    'turn_sped': 720,  # max rotational speed      (degrees per second)
+    'velocity_max': 30,  # max velocity              (units per second)
     'acceleration_max': 0.25,  # max acceleration (+/-)    (units per second^2)
 
     'border_x_min': 0,  # arena western border
